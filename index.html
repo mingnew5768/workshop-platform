@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心靈工作坊平台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf6f1; --warm-white: #fdf9f5; --blush: #e8c4b0;
+  --rose: #c8917a; --terracotta: #b07060; --sage: #8fa888;
+  --sage-light: #b8cbb3; --sage-pale: #dde8d8; --warm-brown: #6b4c3b;
+  --text-dark: #3d2b20; --text-mid: #7a5c4e; --text-light: #a88a7c;
+  --sand: #e8ddd0; --gold: #c9a96e; --deep: #2a1f1a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Noto Sans TC',sans-serif; background:var(--cream); color:var(--text-dark); overflow-x:hidden; }
+
+/* ── TAB NAV ── */
+.top-bar {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(250,246,241,0.92); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(200,170,150,0.25);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; height:60px;
+}
+.logo { font-family:'Noto Serif TC',serif; font-size:1rem; font-weight:500; color:var(--warm-brown); letter-spacing:0.1em; }
+.tab-nav { display:flex; gap:4px; }
+.tab-btn {
+  padding:8px 20px; border:none; background:transparent;
+  font-family:'Noto Sans TC',sans-serif; font-size:0.82rem;
+  letter-spacing:0.06em; color:var(--text-mid); cursor:pointer;
+  border-radius:30px; transition:all 0.25s;
+}
+.tab-btn.active { background:var(--rose); color:white; }
+.tab-btn:hover:not(.active) { background:var(--sand); }
+
+/* ── PAGES ── */
+.page { display:none; padding-top:60px; min-height:100vh; }
+.page.active { display:block; }
+
+/* ════════════════════════════════
+   PAGE 1 — 課程展示
+════════════════════════════════ */
+.hero {
+  min-height:92vh; display:flex; align-items:center;
+  padding:80px 60px; position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 75% 35%, #e8d5c8 0%, transparent 60%),
+    radial-gradient(ellipse 55% 70% at 15% 85%, #d8e4d0 0%, transparent 50%),
+    var(--warm-white);
+}
+.orb { position:absolute; border-radius:50%; filter:blur(55px); opacity:0.45; }
+.o1 { width:440px;height:440px;background:#e2c5b5;top:-80px;right:-60px;animation:fl 9s ease-in-out infinite; }
+.o2 { width:300px;height:300px;background:#c5d9be;bottom:-40px;left:-60px;animation:fl 11s ease-in-out infinite reverse; }
+@keyframes fl { 0%,100%{transform:translate(0,0)} 50%{transform:translate(15px,-12px)} }
+.hero-content { position:relative;z-index:2;max-width:620px;animation:fadeUp 1s ease both; }
+.hero-tag { display:inline-block;font-size:0.72rem;letter-spacing:0.2em;color:var(--rose);text-transform:uppercase;background:rgba(200,145,122,0.1);padding:5px 14px;border-radius:20px;margin-bottom:24px; }
+.hero h1 { font-family:'Noto Serif TC',serif;font-size:clamp(2rem,4.5vw,3.2rem);font-weight:300;line-height:1.6;margin-bottom:20px;letter-spacing:0.05em; }
+.hero h1 em { font-style:italic;color:var(--rose);font-family:'Cormorant Garamond',serif;font-size:1.25em; }
+.hero p { font-size:0.95rem;line-height:2;color:var(--text-mid);font-weight:300;margin-bottom:36px; }
+.btn-r { background:var(--rose);color:white;padding:13px 30px;border-radius:40px;text-decoration:none;font-size:0.88rem;letter-spacing:0.08em;cursor:pointer;border:none;font-family:inherit;transition:all 0.3s;box-shadow:0 8px 24px rgba(200,145,122,0.3);display:inline-block; }
+.btn-r:hover { background:var(--terracotta);transform:translateY(-2px); }
+.btn-o { color:var(--text-mid);padding:13px 24px;border:1.5px solid var(--sand);border-radius:40px;text-decoration:none;font-size:0.88rem;cursor:pointer;font-family:inherit;background:transparent;transition:all 0.3s;display:inline-block;margin-left:12px; }
+.btn-o:hover { border-color:var(--rose);color:var(--rose); }
+
+/* Courses grid */
+.courses-section { padding:80px 60px; background:var(--warm-white); }
+.sec-label { font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--rose);margin-bottom:12px; }
+.sec-title { font-family:'Noto Serif TC',serif;font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:400;color:var(--text-dark);line-height:1.6;margin-bottom:40px; }
+.courses-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px;max-width:1100px; }
+.course-card {
+  background:white;border-radius:18px;overflow:hidden;
+  border:1px solid rgba(200,170,150,0.15);
+  transition:all 0.35s;cursor:pointer;
+}
+.course-card:hover { transform:translateY(-5px);box-shadow:0 18px 48px rgba(0,0,0,0.07); }
+.card-top { height:130px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative; }
+.ct-rose { background:linear-gradient(135deg,#f0d8cc,#e8c4b0); }
+.ct-sage { background:linear-gradient(135deg,#cfdeca,#b8cbb3); }
+.ct-gold { background:linear-gradient(135deg,#f0e0c0,#e0c898); }
+.ct-mauve { background:linear-gradient(135deg,#ddd0e8,#c8b8d8); }
+.card-badge { position:absolute;top:12px;right:12px;background:white;border-radius:20px;padding:3px 10px;font-size:0.68rem;letter-spacing:0.05em;color:var(--text-mid); }
+.card-body { padding:22px; }
+.card-body h3 { font-family:'Noto Serif TC',serif;font-size:1.05rem;color:var(--text-dark);margin-bottom:8px;font-weight:500; }
+.card-body p { font-size:0.83rem;color:var(--text-mid);line-height:1.85;margin-bottom:16px; }
+.card-meta { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px; }
+.meta { font-size:0.72rem;padding:3px 10px;border-radius:15px;background:var(--cream);color:var(--text-light); }
+.card-footer { display:flex;justify-content:space-between;align-items:center; }
+.card-price { font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--rose); }
+.card-price span { font-size:0.75rem;font-family:'Noto Sans TC',sans-serif;color:var(--text-light); }
+.enroll-btn { background:var(--rose);color:white;border:none;padding:8px 18px;border-radius:20px;font-size:0.78rem;cursor:pointer;font-family:inherit;transition:all 0.2s; }
+.enroll-btn:hover { background:var(--terracotta); }
+
+/* Testimonials */
+.testi-section { padding:80px 60px;background:linear-gradient(135deg,#f0e8e0,#e4eee0); }
+.testi-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1000px;margin-top:40px; }
+.testi-card { background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);border-radius:18px;padding:28px;border:1px solid rgba(255,255,255,0.8); }
+.tq { font-family:'Cormorant Garamond',serif;font-size:2.8rem;color:var(--rose);opacity:0.5;line-height:1; }
+.tt { font-size:0.87rem;color:var(--text-mid);line-height:1.95;margin:8px 0 18px;font-weight:300; }
+.ta { display:flex;align-items:center;gap:10px; }
+.av { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem; }
+.an { font-size:0.82rem;color:var(--text-dark);font-weight:500; }
+.ad { font-size:0.75rem;color:var(--text-light);margin-top:2px; }
+
+/* ════════════════════════════════
+   PAGE 2 — 報名管理
+════════════════════════════════ */
+.mgmt-page { padding:80px 60px; background:var(--cream); }
+.mgmt-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px; }
+.mgmt-tabs { display:flex;gap:8px;margin-bottom:32px; }
+.mtab { padding:8px 20px;border:1.5px solid var(--sand);background:white;border-radius:30px;font-family:inherit;font-size:0.82rem;color:var(--text-mid);cursor:pointer;transition:all 0.2s; }
+.mtab.active { border-color:var(--rose);color:var(--rose);background:rgba(200,145,122,0.06); }
+
+/* Registration form modal */
+.modal-overlay { display:none;position:fixed;inset:0;background:rgba(61,43,32,0.4);z-index:500;backdrop-filter:blur(4px);align-items:center;justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:white;border-radius:24px;padding:40px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;animation:fadeUp 0.3s ease; }
+.modal h2 { font-family:'Noto Serif TC',serif;font-size:1.3rem;color:var(--text-dark);margin-bottom:28px;font-weight:500; }
+.fg { margin-bottom:18px; }
+.fl { display:block;font-size:0.78rem;letter-spacing:0.05em;color:var(--text-mid);margin-bottom:6px; }
+.fi, .fs, .fta {
+  width:100%;padding:11px 14px;border:1.5px solid var(--sand);border-radius:10px;
+  background:var(--cream);color:var(--text-dark);font-family:'Noto Sans TC',sans-serif;
+  font-size:0.87rem;outline:none;transition:border-color 0.25s;
+}
+.fi:focus,.fs:focus,.fta:focus { border-color:var(--rose); }
+.fta { resize:vertical;min-height:80px; }
+.fr { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+.modal-footer { display:flex;gap:12px;margin-top:24px; }
+.btn-cancel { flex:1;padding:12px;border:1.5px solid var(--sand);background:white;border-radius:30px;font-family:inherit;font-size:0.87rem;color:var(--text-mid);cursor:pointer; }
+
+/* Roster table */
+.roster-card { background:white;border-radius:18px;padding:28px;border:1px solid rgba(200,170,150,0.15); }
+.roster-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:20px; }
+.roster-title { font-family:'Noto Serif TC',serif;font-size:1.1rem;color:var(--text-dark); }
+.roster-count { background:var(--sage-pale);color:var(--sage);font-size:0.78rem;padding:4px 12px;border-radius:15px; }
+.roster-table { width:100%;border-collapse:collapse; }
+.roster-table th { font-size:0.75rem;letter-spacing:0.08em;color:var(--text-light);text-align:left;padding:10px 14px;border-bottom:1px solid var(--sand); }
+.roster-table td { font-size:0.85rem;color:var(--text-mid);padding:12px 14px;border-bottom:1px solid rgba(232,221,208,0.4); }
+.status-confirmed { background:#d8ecd0;color:#5a8a50;padding:3px 10px;border-radius:12px;font-size:0.72rem; }
+.status-pending { background:#f0e8d8;color:#a88040;padding:3px 10px;border-radius:12px;font-size:0.72rem; }
+.remove-btn { background:none;border:none;color:var(--text-light);cursor:pointer;font-size:0.8rem;transition:color 0.2s; }
+.remove-btn:hover { color:var(--rose); }
+.empty-state { text-align:center;padding:48px;color:var(--text-light);font-size:0.9rem; }
+
+/* Event cards */
+.events-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-bottom:32px; }
+.event-card {
+  background:white;border-radius:16px;padding:24px;
+  border:1px solid rgba(200,170,150,0.15);cursor:pointer;transition:all 0.3s;
+  border-left:4px solid var(--rose);
+}
+.event-card:hover { box-shadow:0 8px 24px rgba(0,0,0,0.06);transform:translateY(-2px); }
+.event-card.selected { border-left-color:var(--sage);box-shadow:0 8px 24px rgba(143,168,136,0.2); }
+.ev-title { font-family:'Noto Serif TC',serif;font-size:1rem;color:var(--text-dark);margin-bottom:8px; }
+.ev-meta { font-size:0.8rem;color:var(--text-light);margin-bottom:12px; }
+.ev-bar { background:var(--sand);border-radius:10px;height:6px;overflow:hidden; }
+.ev-fill { height:100%;background:linear-gradient(90deg,var(--rose),var(--blush));border-radius:10px;transition:width 0.5s; }
+.ev-count { font-size:0.75rem;color:var(--text-mid);margin-top:6px; }
+
+/* ════════════════════════════════
+   PAGE 3 — 線上工作坊工具
+════════════════════════════════ */
+.tool-page { padding:80px 40px; background:var(--cream); }
+.tool-header { text-align:center;margin-bottom:48px; }
+.tool-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;max-width:1100px;margin:0 auto; }
+
+/* OH Card tool */
+.tool-card { background:white;border-radius:22px;padding:32px;border:1px solid rgba(200,170,150,0.15); }
+.tool-card-title { font-family:'Noto Serif TC',serif;font-size:1.1rem;color:var(--text-dark);margin-bottom:6px;font-weight:500; }
+.tool-card-sub { font-size:0.82rem;color:var(--text-light);margin-bottom:24px; }
+.tool-divider { border:none;border-top:1px solid var(--sand);margin:20px 0; }
+
+/* OH Card flip */
+.oh-area { display:flex;flex-direction:column;align-items:center;gap:16px; }
+.card-3d { width:130px;height:180px;perspective:800px;cursor:pointer; }
+.card-inner { width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+.card-inner.flipped { transform:rotateY(180deg); }
+.card-face { position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden; }
+.card-front { background:linear-gradient(135deg,var(--rose),var(--terracotta));color:white;font-size:2rem; }
+.card-front-pattern { position:absolute;inset:0;border-radius:14px;opacity:0.15;background:repeating-linear-gradient(45deg,white 0,white 1px,transparent 0,transparent 50%);background-size:8px 8px; }
+.card-back { background:linear-gradient(135deg,#f5f0ea,#ede5db);transform:rotateY(180deg);flex-direction:column;gap:8px;padding:14px; }
+.card-word { font-family:'Noto Serif TC',serif;font-size:1.1rem;color:var(--warm-brown);font-weight:500;text-align:center; }
+.card-img-area { font-size:2.5rem; }
+.draw-btn { background:var(--rose);color:white;border:none;padding:10px 24px;border-radius:30px;font-family:inherit;font-size:0.85rem;cursor:pointer;transition:all 0.2s; }
+.draw-btn:hover { background:var(--terracotta); }
+.oh-prompt { background:var(--sage-pale);border-radius:12px;padding:14px 16px;font-size:0.85rem;color:var(--text-mid);line-height:1.8;text-align:center; }
+
+/* Reflection */
+.reflect-list { display:flex;flex-direction:column;gap:10px;margin-bottom:16px; }
+.reflect-item { background:var(--cream);border-radius:10px;padding:14px 16px;font-size:0.85rem;color:var(--text-mid);line-height:1.7;cursor:pointer;transition:all 0.2s;border:1.5px solid transparent; }
+.reflect-item:hover { border-color:var(--rose);background:white; }
+.reflect-item.shown { border-color:var(--sage);background:var(--sage-pale);color:var(--text-dark); }
+.journal-area { width:100%;min-height:100px;padding:12px;border:1.5px solid var(--sand);border-radius:10px;background:var(--cream);font-family:inherit;font-size:0.85rem;color:var(--text-dark);resize:vertical;outline:none;transition:border-color 0.25s; }
+.journal-area:focus { border-color:var(--rose); }
+
+/* Poll */
+.poll-question { font-size:0.95rem;color:var(--text-dark);font-weight:500;margin-bottom:16px;line-height:1.6; }
+.poll-options { display:flex;flex-direction:column;gap:8px;margin-bottom:16px; }
+.poll-option { display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:10px;border:1.5px solid var(--sand);transition:all 0.2s;background:white; }
+.poll-option:hover { border-color:var(--rose); }
+.poll-option.voted { border-color:var(--sage);background:var(--sage-pale); }
+.poll-dot { width:16px;height:16px;border-radius:50%;border:2px solid var(--sand);flex-shrink:0;transition:all 0.2s; }
+.poll-option.voted .poll-dot { background:var(--sage);border-color:var(--sage); }
+.poll-label { font-size:0.87rem;color:var(--text-mid);flex:1; }
+.poll-bar-wrap { flex:1;background:var(--sand);border-radius:10px;height:5px;overflow:hidden;margin-left:8px; }
+.poll-bar { height:100%;background:linear-gradient(90deg,var(--sage),var(--sage-light));border-radius:10px;transition:width 0.5s; }
+.poll-pct { font-size:0.75rem;color:var(--text-light);min-width:32px;text-align:right; }
+.poll-submit { width:100%;padding:11px;background:var(--sage);color:white;border:none;border-radius:30px;font-family:inherit;font-size:0.85rem;cursor:pointer;transition:all 0.2s; }
+.poll-submit:hover { background:#7a9872; }
+
+/* Timer tool */
+.timer-display { text-align:center; }
+.timer-num { font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--warm-brown);letter-spacing:0.05em; }
+.timer-controls { display:flex;gap:10px;justify-content:center;margin-top:14px; }
+.tc-btn { padding:9px 20px;border-radius:30px;border:none;font-family:inherit;font-size:0.82rem;cursor:pointer;transition:all 0.2s; }
+.tc-start { background:var(--rose);color:white; }
+.tc-start:hover { background:var(--terracotta); }
+.tc-reset { background:var(--sand);color:var(--text-mid); }
+.tc-reset:hover { background:var(--blush); }
+.timer-presets { display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap; }
+.tp { padding:5px 12px;border:1.5px solid var(--sand);background:white;border-radius:15px;font-size:0.75rem;color:var(--text-mid);cursor:pointer;transition:all 0.2s; }
+.tp:hover { border-color:var(--rose);color:var(--rose); }
+
+/* ── UTILS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.fade-up { opacity:0;transform:translateY(24px);transition:opacity 0.6s,transform 0.6s; }
+.fade-up.visible { opacity:1;transform:translateY(0); }
+.success-toast {
+  position:fixed;bottom:30px;right:30px;z-index:999;
+  background:var(--sage);color:white;padding:14px 24px;border-radius:12px;
+  font-size:0.88rem;letter-spacing:0.04em;
+  opacity:0;transform:translateY(10px);transition:all 0.3s;
+  pointer-events:none;
+}
+.success-toast.show { opacity:1;transform:translateY(0); }
+footer { background:var(--warm-brown);color:rgba(255,255,255,0.65);padding:36px;text-align:center;font-size:0.8rem;line-height:2.2;letter-spacing:0.05em; }
+footer strong { color:rgba(255,255,255,0.9); }
+@media(max-width:768px) {
+  .top-bar { padding:0 20px; }
+  .tab-btn { padding:7px 12px;font-size:0.75rem; }
+  .hero,.courses-section,.testi-section,.mgmt-page,.tool-page { padding-left:24px;padding-right:24px; }
+  .fr { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo">心靈工作坊</div>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchPage('p1',this)">🌿 課程介紹</button>
+    <button class="tab-btn" onclick="switchPage('p2',this)">📋 報名管理</button>
+    <button class="tab-btn" onclick="switchPage('p3',this)">✨ 工作坊工具</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 1：課程介紹 ══ -->
+<div id="p1" class="page active">
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="orb o1"></div><div class="orb o2"></div>
+    <div class="hero-content">
+      <span class="hero-tag">線上讀書會 × 心靈工作坊</span>
+      <h1>在這裡，<br>你可以<em>安心</em><br>做回自己</h1>
+      <p>透過專業引導與溫暖陪伴，帶你走進內心深處。<br>每一次相聚，都是一次與自己相遇的旅程。</p>
+      <button class="btn-r" onclick="switchPage('p2', document.querySelectorAll('.tab-btn')[1])">立即報名</button>
+      <button class="btn-o" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">瀏覽課程</button>
+    </div>
+  </section>
+
+  <section id="courses" class="courses-section fade-up">
+    <p class="sec-label">課程系列</p>
+    <h2 class="sec-title">為你準備的心靈空間</h2>
+    <div class="courses-grid">
+      <div class="course-card" onclick="openEnroll('OH卡探索工作坊')">
+        <div class="card-top ct-rose"><span>🃏</span><span class="card-badge">線上</span></div>
+        <div class="card-body">
+          <h3>OH卡探索工作坊</h3>
+          <p>透過OH卡的圖像語言，連結潛意識，溫柔探索內心深處的故事與渴望。</p>
+          <div class="card-meta">
+            <span class="meta">4小時</span><span class="meta">8人小班</span><span class="meta">每月一場</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">NT$1,800 <span>/ 人</span></div>
+            <button class="enroll-btn">立即報名</button>
+          </div>
+        </div>
+      </div>
+      <div class="course-card" onclick="openEnroll('身心靈讀書會')">
+        <div class="card-top ct-sage"><span>📖</span><span class="card-badge">每月</span></div>
+        <div class="card-body">
+          <h3>身心靈讀書會</h3>
+          <p>結合閱讀、分享與情感支持的成長空間。每月一書，在知識討論中相互滋養。</p>
+          <div class="card-meta">
+            <span class="meta">90分鐘</span><span class="meta">線上舉行</span><span class="meta">定期</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">NT$600 <span>/ 月</span></div>
+            <button class="enroll-btn">立即報名</button>
+          </div>
+        </div>
+      </div>
+      <div class="course-card" onclick="openEnroll('內在力量成長營')">
+        <div class="card-top ct-gold"><span>🌱</span><span class="card-badge">季度</span></div>
+        <div class="card-body">
+          <h3>內在力量成長營</h3>
+          <p>深度沉浸式工作坊，整合薩提爾、正念與敘事取向，重新認識真實的自己。</p>
+          <div class="card-meta">
+            <span class="meta">2天</span><span class="meta">12人限額</span><span class="meta">季度</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">NT$5,800 <span>/ 人</span></div>
+            <button class="enroll-btn">立即報名</button>
+          </div>
+        </div>
+      </div>
+      <div class="course-card" onclick="openEnroll('個別諮商')">
+        <div class="card-top ct-mauve"><span>💬</span><span class="card-badge">預約制</span></div>
+        <div class="card-body">
+          <h3>個別諮商</h3>
+          <p>一對一深度陪伴，以多元心理學取向整合，提供專業且溫暖的諮商空間。</p>
+          <div class="card-meta">
+            <span class="meta">50分鐘</span><span class="meta">線上/實體</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">NT$2,200 <span>/ 次</span></div>
+            <button class="enroll-btn">預約諮詢</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testi-section fade-up">
+    <p class="sec-label">學員回饋</p>
+    <h2 class="sec-title">真實的相遇，真實的改變</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="tq">"</div>
+        <p class="tt">OH卡工作坊讓我第一次感覺自己真的被看見。老師引導得很溫柔，讓我在安全的氛圍中打開了心扉。</p>
+        <div class="ta"><div class="av" style="background:#e8d0c0">🌸</div><div><div class="an">小雅</div><div class="ad">OH卡工作坊學員</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="tq">"</div>
+        <p class="tt">讀書會的討論總是讓我有新的視角，在繁忙的生活中找到一個可以停下來好好感受的地方。</p>
+        <div class="ta"><div class="av" style="background:#d0e0c8">🌿</div><div><div class="an">志明</div><div class="ad">身心靈讀書會成員</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="tq">"</div>
+        <p class="tt">成長營結束後整個人都不一樣了。那兩天真的改變了我看自己的方式，非常感謝有這個空間。</p>
+        <div class="ta"><div class="av" style="background:#e0d0e8">✨</div><div><div class="an">怡如</div><div class="ad">成長營學員</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer><strong>心靈工作坊 × 陳顯銘諮商師</strong><br>以愛與溫柔陪伴每一段旅程 · mingnew@gmail.com</footer>
+</div>
+
+<!-- ══ PAGE 2：報名管理 ══ -->
+<div id="p2" class="page">
+  <div class="mgmt-page">
+    <div class="mgmt-header">
+      <div>
+        <p class="sec-label">報名管理</p>
+        <h2 class="sec-title" style="margin-bottom:0">活動名單總覽</h2>
+      </div>
+      <button class="btn-r" onclick="openEnroll('')">＋ 新增報名</button>
+    </div>
+
+    <!-- Event cards -->
+    <div class="events-grid" id="eventsGrid"></div>
+
+    <!-- Roster -->
+    <div class="roster-card">
+      <div class="roster-header">
+        <div class="roster-title" id="rosterTitle">所有報名</div>
+        <div class="roster-count" id="rosterCount">0 人</div>
+      </div>
+      <table class="roster-table">
+        <thead><tr>
+          <th>姓名</th><th>聯絡方式</th><th>活動</th><th>狀態</th><th>備注</th><th></th>
+        </tr></thead>
+        <tbody id="rosterBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState">尚無報名資料，點擊上方「新增報名」開始吧 🌿</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 3：工作坊工具 ══ -->
+<div id="p3" class="page">
+  <div class="tool-page">
+    <div class="tool-header">
+      <p class="sec-label">線上工具</p>
+      <h2 class="sec-title">工作坊進行輔助工具</h2>
+    </div>
+    <div class="tool-grid">
+
+      <!-- OH Card -->
+      <div class="tool-card" style="grid-column: span 2;">
+        <div class="tool-card-title">🃏 OH卡抽牌</div>
+        <div class="tool-card-sub">同時抽一張圖卡 + 一張字卡，點擊牌背翻開</div>
+        <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;">
+          <!-- 圖卡 -->
+          <div style="flex:1;min-width:220px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+            <div style="font-size:0.78rem;letter-spacing:0.1em;color:var(--text-light);text-transform:uppercase;">圖卡</div>
+            <div class="card-3d" style="width:180px;height:240px;" id="imgCard" onclick="flipImgCard()">
+              <div class="card-inner" id="imgInner">
+                <div class="card-face card-front" style="border-radius:16px;">
+                  <div class="card-front-pattern"></div>
+                  <span style="font-size:2.5rem;">🌀</span>
+                </div>
+                <div class="card-face" style="border-radius:16px;background:#f5f0ea;transform:rotateY(180deg);overflow:hidden;">
+                  <img id="ohImgReal" src="" alt="OH圖卡" style="width:100%;height:100%;object-fit:cover;border-radius:16px;display:none;">
+                  <div id="ohImgLoading" style="color:var(--text-light);font-size:0.8rem;">載入中…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 字卡 -->
+          <div style="flex:1;min-width:180px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+            <div style="font-size:0.78rem;letter-spacing:0.1em;color:var(--text-light);text-transform:uppercase;">字卡</div>
+            <div class="card-3d" style="width:160px;height:240px;" id="wordCard" onclick="flipWordCard()">
+              <div class="card-inner" id="wordInner">
+                <div class="card-face card-front" style="border-radius:16px;background:linear-gradient(135deg,var(--sage),var(--sage-light));">
+                  <div class="card-front-pattern"></div>
+                  <span style="font-size:2.5rem;">✨</span>
+                </div>
+                <div class="card-face" style="border-radius:16px;background:linear-gradient(135deg,#f5f0ea,#ede5db);transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;">
+                  <div id="ohWord" style="font-family:'Noto Serif TC',serif;font-size:1.8rem;color:var(--warm-brown);font-weight:500;text-align:center;padding:16px;letter-spacing:0.1em;">溫柔</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 右側：提示 + 按鈕 -->
+          <div style="flex:2;min-width:220px;display:flex;flex-direction:column;gap:14px;padding-top:28px;">
+            <div class="oh-prompt" id="ohPrompt" style="font-size:0.92rem;line-height:1.9;">點擊牌背翻開圖卡與字卡，<br>看看今天帶來什麼訊息…</div>
+            <div id="ohCardNum" style="font-size:0.75rem;color:var(--text-light);"></div>
+            <button class="draw-btn" onclick="drawNewCard()" style="align-self:flex-start;">🔀 重新抽牌</button>
+            <button class="draw-btn" onclick="flipAll()" style="align-self:flex-start;background:var(--sage);">👁 全部翻開</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reflection questions -->
+      <div class="tool-card">
+        <div class="tool-card-title">💭 引導反思問題</div>
+        <div class="tool-card-sub">點擊問題展開，可作為討論引導</div>
+        <div class="reflect-list" id="reflectList"></div>
+        <button class="draw-btn" style="width:100%" onclick="shuffleReflect()">換一組問題</button>
+        <hr class="tool-divider">
+        <div class="tool-card-sub" style="margin-bottom:8px">📝 即時筆記</div>
+        <textarea class="journal-area" placeholder="在這裡記錄你的感受與想法…"></textarea>
+      </div>
+
+      <!-- Poll -->
+      <div class="tool-card">
+        <div class="tool-card-title">🗳 即時小投票</div>
+        <div class="tool-card-sub">讓學員快速表達當下狀態</div>
+        <div class="poll-question" id="pollQ">現在這一刻，你的內心感受最接近哪一個？</div>
+        <div class="poll-options" id="pollOptions"></div>
+        <button class="poll-submit" onclick="submitPoll()">送出回應</button>
+        <hr class="tool-divider">
+        <button class="draw-btn" style="width:100%;background:var(--gold)" onclick="nextPoll()">換下一題</button>
+      </div>
+
+      <!-- Timer -->
+      <div class="tool-card">
+        <div class="tool-card-title">⏱ 計時器</div>
+        <div class="tool-card-sub">靜心、書寫、分享的時間管理</div>
+        <div class="timer-display">
+          <div class="timer-num" id="timerNum">05:00</div>
+          <div class="timer-controls">
+            <button class="tc-btn tc-start" id="timerStartBtn" onclick="toggleTimer()">▶ 開始</button>
+            <button class="tc-btn tc-reset" onclick="resetTimer()">↺ 重置</button>
+          </div>
+          <div class="timer-presets">
+            <div class="tp" onclick="setTimer(60)">1分</div>
+            <div class="tp" onclick="setTimer(180)">3分</div>
+            <div class="tp" onclick="setTimer(300)">5分</div>
+            <div class="tp" onclick="setTimer(600)">10分</div>
+            <div class="tp" onclick="setTimer(900)">15分</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <h2>報名登記</h2>
+    <div class="fr">
+      <div class="fg"><label class="fl">姓名 *</label><input class="fi" id="fName" placeholder="你的稱呼"></div>
+      <div class="fg"><label class="fl">電話</label><input class="fi" id="fPhone" placeholder="09XX-XXX-XXX"></div>
+    </div>
+    <div class="fg"><label class="fl">Email *</label><input class="fi" id="fEmail" type="email" placeholder="your@email.com"></div>
+    <div class="fg"><label class="fl">報名活動 *</label>
+      <select class="fs" id="fWorkshop">
+        <option value="">請選擇…</option>
+        <option>OH卡探索工作坊</option>
+        <option>身心靈讀書會</option>
+        <option>內在力量成長營</option>
+        <option>個別諮商</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">狀態</label>
+      <select class="fs" id="fStatus">
+        <option value="pending">待確認</option>
+        <option value="confirmed">已確認</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">備注</label><textarea class="fta" id="fNote" placeholder="特殊需求或備注…"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('modalOverlay').classList.remove('open')">取消</button>
+      <button class="btn-r" style="flex:2" onclick="saveEnroll()">確認報名 ✉</button>
+    </div>
+  </div>
+</div>
+
+<div class="success-toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let enrollments = JSON.parse(localStorage.getItem('enrollments')||'[]');
+let selectedEvent = null;
+let timerSec = 300, timerInterval = null, timerRunning = false;
+
+// ── PAGE SWITCH ──
+function switchPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='p2') renderMgmt();
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ── MODAL ──
+function openEnroll(ws) {
+  document.getElementById('fName').value='';
+  document.getElementById('fPhone').value='';
+  document.getElementById('fEmail').value='';
+  document.getElementById('fWorkshop').value=ws||'';
+  document.getElementById('fStatus').value='pending';
+  document.getElementById('fNote').value='';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(e) {
+  if(e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+function saveEnroll() {
+  const name=document.getElementById('fName').value.trim();
+  const email=document.getElementById('fEmail').value.trim();
+  const ws=document.getElementById('fWorkshop').value;
+  if(!name||!email||!ws){alert('請填寫必填欄位');return;}
+  enrollments.push({
+    id:Date.now(), name, email,
+    phone:document.getElementById('fPhone').value,
+    workshop:ws, status:document.getElementById('fStatus').value,
+    note:document.getElementById('fNote').value,
+    date:new Date().toLocaleDateString('zh-TW')
+  });
+  localStorage.setItem('enrollments',JSON.stringify(enrollments));
+  document.getElementById('modalOverlay').classList.remove('open');
+  toast('🌿 報名成功！已加入名單');
+  renderMgmt();
+}
+
+// ── MGMT RENDER ──
+const workshops = ['OH卡探索工作坊','身心靈讀書會','內在力量成長營','個別諮商'];
+const maxCap = {'OH卡探索工作坊':8,'身心靈讀書會':20,'內在力量成長營':12,'個別諮商':1};
+
+function renderMgmt() {
+  renderEventCards();
+  renderRoster(selectedEvent);
+}
+function renderEventCards() {
+  const g = document.getElementById('eventsGrid');
+  g.innerHTML = workshops.map(w=>{
+    const cnt = enrollments.filter(e=>e.workshop===w).length;
+    const cap = maxCap[w]||10;
+    const pct = Math.min(100, Math.round(cnt/cap*100));
+    return `<div class="event-card${selectedEvent===w?' selected':''}" onclick="selectEvent('${w}')">
+      <div class="ev-title">${w}</div>
+      <div class="ev-meta">名額 ${cnt} / ${cap} 人</div>
+      <div class="ev-bar"><div class="ev-fill" style="width:${pct}%"></div></div>
+      <div class="ev-count">${pct}% 報名中</div>
+    </div>`;
+  }).join('');
+}
+function selectEvent(w) {
+  selectedEvent = selectedEvent===w ? null : w;
+  renderMgmt();
+}
+function renderRoster(filter) {
+  const list = filter ? enrollments.filter(e=>e.workshop===filter) : enrollments;
+  document.getElementById('rosterTitle').textContent = filter||'所有報名';
+  document.getElementById('rosterCount').textContent = list.length+' 人';
+  const empty = document.getElementById('emptyState');
+  const tbody = document.getElementById('rosterBody');
+  if(!list.length){empty.style.display='block';tbody.innerHTML='';return;}
+  empty.style.display='none';
+  tbody.innerHTML = list.map(e=>`
+    <tr>
+      <td><strong>${e.name}</strong></td>
+      <td>${e.email}<br><small style="color:var(--text-light)">${e.phone||''}</small></td>
+      <td>${e.workshop}</td>
+      <td><span class="status-${e.status}">${e.status==='confirmed'?'已確認':'待確認'}</span></td>
+      <td style="font-size:0.8rem;color:var(--text-light)">${e.note||'—'}</td>
+      <td><button class="remove-btn" onclick="removeEnroll(${e.id})">✕</button></td>
+    </tr>`).join('');
+}
+function removeEnroll(id) {
+  if(!confirm('確定移除此報名？')) return;
+  enrollments = enrollments.filter(e=>e.id!==id);
+  localStorage.setItem('enrollments',JSON.stringify(enrollments));
+  renderMgmt(); toast('已移除報名');
+}
+
+// ── OH CARD ──
+const GITHUB_BASE = 'https://raw.githubusercontent.com/mingnew5768/ohcards-photo/main/';
+const ohWords = ['幻想','堅定','羞愧','違背','道歉','等候','敵對','反省','壓抑','失敗','吸引','詼諧','疲憊','順應','愚蠢','外表','不喜歡','家','受害者','執著','循環','固執','誇讚','生氣','奇妙','痛苦','攻擊','虧欠','專家','喜悅','醜陋','罪惡感','孩童','強迫','聰明','錯誤','抗拒','攫取','羞辱','愛情','遊戲','【空白】','分享','色情','放開','哀傷','危險','厭煩','憎恨','權力遊戲','丟臉','停止','女人','焦慮','開始','感情','付出','父親','裸體','習慣','前進','奴隸','應該','威脅','混亂','依賴','尷尬','陌生人','破壞','希望','消除','上司','改變','孤獨','男性','憎惡','恐懼','夢想','歡笑','弄巧成拙','謊言','恐嚇','姿態','成功','猶豫','同性戀','躲藏','母親','腐朽'];
+const ohTotalImgs = 89;
+const ohPrompts = [
+  '這張牌讓你想到什麼？',
+  '這個意象和你現在的生命有什麼連結？',
+  '如果這張牌想對你說一句話，會是什麼？',
+  '看到這個圖像，你身體有什麼感受？',
+  '這張牌讓你想起了誰？或什麼時刻？',
+  '這個詞對你來說意味著什麼？',
+  '圖卡和字卡放在一起，你看到了什麼故事？',
+  '你現在最不想面對的部分是什麼？',
+];
+
+let imgFlipped = false, wordFlipped = false;
+let currentImgIdx = 1, currentWordIdx = 0;
+
+function randInt(n) { return Math.floor(Math.random()*n); }
+
+function drawNewCard() {
+  // reset flip
+  imgFlipped = false; wordFlipped = false;
+  document.getElementById('imgInner').classList.remove('flipped');
+  document.getElementById('wordInner').classList.remove('flipped');
+  document.getElementById('ohPrompt').innerHTML = '點擊牌背翻開圖卡與字卡，<br>看看今天帶來什麼訊息…';
+
+  // pick random img (1–89)
+  currentImgIdx = randInt(ohTotalImgs) + 1;
+  const padded = String(currentImgIdx).padStart(2,'0');
+  const imgUrl = GITHUB_BASE + 'card_' + padded + '.jpeg';
+
+  const imgEl = document.getElementById('ohImgReal');
+  const loadEl = document.getElementById('ohImgLoading');
+  imgEl.style.display = 'none';
+  loadEl.style.display = 'block';
+  loadEl.textContent = '載入中…';
+  imgEl.onload = () => { imgEl.style.display='block'; loadEl.style.display='none'; };
+  imgEl.onerror = () => { loadEl.textContent = '圖片載入失敗'; };
+  imgEl.src = imgUrl;
+
+  // pick random word
+  currentWordIdx = randInt(ohWords.length);
+  document.getElementById('ohWord').textContent = ohWords[currentWordIdx];
+  document.getElementById('ohCardNum').textContent = '圖卡 #' + currentImgIdx + '　字卡：' + ohWords[currentWordIdx];
+}
+
+function flipImgCard() {
+  if(imgFlipped) return;
+  imgFlipped = true;
+  document.getElementById('imgInner').classList.add('flipped');
+  if(imgFlipped && wordFlipped) showPrompt();
+}
+function flipWordCard() {
+  if(wordFlipped) return;
+  wordFlipped = true;
+  document.getElementById('wordInner').classList.add('flipped');
+  if(imgFlipped && wordFlipped) showPrompt();
+}
+function flipAll() {
+  if(!imgFlipped){ imgFlipped=true; document.getElementById('imgInner').classList.add('flipped'); }
+  if(!wordFlipped){ wordFlipped=true; document.getElementById('wordInner').classList.add('flipped'); }
+  showPrompt();
+}
+function showPrompt() {
+  const q = ohPrompts[randInt(ohPrompts.length)];
+  document.getElementById('ohPrompt').textContent = q;
+}
+
+// init first draw
+drawNewCard();
+
+// ── REFLECT ──
+const reflectBank = [
+  '現在這個當下，我的內心感受是什麼？','這件事讓我最難以接受的部分是什麼？',
+  '如果我完全信任自己，我會怎麼做？','在這個情境中，我最需要的是什麼？',
+  '我願意放下什麼，來讓自己更輕盈？','這段關係或經歷帶給我什麼禮物？',
+  '我的身體現在想告訴我什麼？','如果五年後的我來看這件事，會怎麼說？',
+  '在這段旅程中，我最感謝自己的一件事是什麼？','什麼讓我感到最有活力？',
+];
+let shownReflect = new Set();
+function shuffleReflect() {
+  shownReflect.clear();
+  const pool = [...reflectBank].sort(()=>Math.random()-0.5).slice(0,3);
+  const list = document.getElementById('reflectList');
+  list.innerHTML = pool.map((q,i)=>`
+    <div class="reflect-item" onclick="this.classList.toggle('shown')">${q}</div>
+  `).join('');
+}
+shuffleReflect();
+
+// ── POLL ──
+const polls = [
+  { q:'現在這一刻，你的內心感受最接近哪一個？', opts:['平靜安穩🌊','有點緊張😅','充滿好奇🌟','有些沉重💭'] },
+  { q:'今天的主題對你的共鳴程度？', opts:['深深共鳴💡','有些連結🌱','中立觀察👀','還在消化🌀'] },
+  { q:'此刻你最想給自己的禮物是？', opts:['一個擁抱🤗','一段寧靜🕊️','一點勇氣🦁','一份接納🌸'] },
+];
+let pollIdx=0, pollVotes=[], pollVoted=false;
+function renderPoll() {
+  const p = polls[pollIdx];
+  pollVotes = new Array(p.opts.length).fill(0); pollVoted=false;
+  document.getElementById('pollQ').textContent = p.q;
+  const el = document.getElementById('pollOptions');
+  el.innerHTML = p.opts.map((o,i)=>`
+    <div class="poll-option" id="po${i}" onclick="selectPoll(${i})">
+      <div class="poll-dot" id="pd${i}"></div>
+      <div class="poll-label">${o}</div>
+      <div class="poll-bar-wrap"><div class="poll-bar" id="pb${i}" style="width:0%"></div></div>
+      <div class="poll-pct" id="pp${i}">0%</div>
+    </div>`).join('');
+}
+let selectedPoll = -1;
+function selectPoll(i) {
+  if(pollVoted) return;
+  selectedPoll=i;
+  document.querySelectorAll('.poll-option').forEach((el,j)=>{
+    el.classList.toggle('voted',j===i);
+  });
+}
+function submitPoll() {
+  if(selectedPoll<0){toast('請先選擇一個選項');return;}
+  pollVotes[selectedPoll]++; pollVoted=true;
+  const total = pollVotes.reduce((a,b)=>a+b,0);
+  pollVotes.forEach((v,i)=>{
+    const pct = Math.round(v/total*100);
+    document.getElementById('pb'+i).style.width=pct+'%';
+    document.getElementById('pp'+i).textContent=pct+'%';
+  });
+  toast('✅ 已送出回應！');
+}
+function nextPoll() {
+  pollIdx=(pollIdx+1)%polls.length; selectedPoll=-1; renderPoll();
+}
+renderPoll();
+
+// ── TIMER ──
+function updateTimerDisplay() {
+  const m=Math.floor(timerSec/60).toString().padStart(2,'0');
+  const s=(timerSec%60).toString().padStart(2,'0');
+  document.getElementById('timerNum').textContent=m+':'+s;
+}
+function toggleTimer() {
+  const btn=document.getElementById('timerStartBtn');
+  if(!timerRunning) {
+    timerRunning=true; btn.textContent='⏸ 暫停';
+    timerInterval=setInterval(()=>{
+      if(timerSec<=0){clearInterval(timerInterval);timerRunning=false;btn.textContent='▶ 開始';toast('⏰ 時間到！');return;}
+      timerSec--; updateTimerDisplay();
+    },1000);
+  } else {
+    timerRunning=false; clearInterval(timerInterval); btn.textContent='▶ 開始';
+  }
+}
+function resetTimer() {
+  timerRunning=false; clearInterval(timerInterval);
+  document.getElementById('timerStartBtn').textContent='▶ 開始';
+  timerSec=300; updateTimerDisplay();
+}
+function setTimer(s) { timerRunning=false; clearInterval(timerInterval); document.getElementById('timerStartBtn').textContent='▶ 開始'; timerSec=s; updateTimerDisplay(); }
+updateTimerDisplay();
+
+// ── SCROLL ANIM ──
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');})},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// init mgmt render
+renderMgmt();
+</script>
+</body>
+</html>
